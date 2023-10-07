@@ -1,19 +1,157 @@
 \documentclass{article}
-\usepackage{graphicx} % Required for inserting images
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{afterpage}
+\usepackage{float}
+\usepackage{amsmath}
 
-\title{TP1 }
-\author{Roméo BEX Tristan BEX}
-\date{Août 2023}
+
+\newfloat{customfloat}{H}{lop}
+
+\title{TP1 Quelques manipulations élémentaires autour de l'inertie (des vins de Loire)}
+\author{Roméo Bex \and Tristan Rivaldi}
+\date{02/10/2023}
+    
+\setlength{\textwidth}{6in}
 
 \begin{document}
-
-
 
 \maketitle
 
 \section{Introduction}
 
+Nous nous intéressons dans ce TP à l'étude de différents vins du département de la Loire. Nous disposons d'un jeu de données constitué de 21 vins décrits selon 31 attributs différents. 29 de ces attributs sont quantitatifs, les deux restants sont qualitatifs. Nous traduisons les variables quantitatives dans l'espace euclidien \(\mathbb{R}^{29}\).
+
+Pour cela, nous allons importer les bibliothèques qui nous seront utiles.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{images.png}
+    \label{fig:enter-label}
+\end{figure}
 
 
+\section{Définitions de fonctions générales}
+
+Nous aurons besoin d'utiliser des notions statistiques telles que l'inertie et le barycentre. Nous allons donc définir des fonctions qui nous permettront de les calculer plus tard.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image2.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\subsection{Chargement des données}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image13.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\section{Centrage réduction des variables quantitatives}
+
+En premier lieu, nous allons extraire les variables quantitatives du jeu de données à l'aide de .iloc et on va les transformer en une matrice. Pour cela nous utilisons .values qui ignore les labels des axes.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image14.png}
+    \label{fig:enter-label}
+\end{figure}
+
+La transformation suivante nous permet de centrer et réduire chaque variable quantitative : 
+
+\begin{center}
+$\displaystyle \frac{x_{i}^{j}-\overline{x}^{j}}{\sigma^{j}}$.
+\end{center}
+
+Le centrage-réduction des variables quantitatives se fera grâce à la fonction scale crée plus haut. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image15.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image16.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\section{Montrons que le barycentre se trouve à l'origine}
+
+Posons \textbf{N = 21} Le nombre d'observations et \textbf{J=29} le nombre de variables quantitatives,
+$\mathbf{z_{i}^{j}}$ la variable centrée réduite.
+Nous avons centré et réduit les variables quantitatives.
+Ainsi 
+$\forall(i,j)\in \left\{1,...,N\right\}\times\left\{1,...,J\right\}$ ,   $\mathbf{z_{i}^{j}}$ = $\displaystyle \frac{x_{i}^{j}-\overline{x}^{j}}{\sigma^{j}}$ 
+
+avec $\overline{x}^{j}$ et $\sigma^{j}$ la moyenne et l'écart-type de la variable quantitative j. 
+
+Le barycentre du nuage est un vecteur \(U \in \mathbb{R}^{29}\) tel que...
+
+$\mathbf{B=(\sum_{i=1}^{N}w_{i}z_{i}^{1},\sum_{i=1}^{N}w_{i}z_{i}^{2},...,\sum_{i=1}^{N}w_{i}z_{i}^{J})}$ 
+
+Comme les poids sont identiques, ceci revient donc à calculer la moyenne de chaque variable centrée-réduite et donc $w_i=\frac{1}{N}$ $\forall i$
+
+Ainsi on a : 
+
+\begin{center}
+$\sum_{i=1}^{N}w_{i}z_{i}^{j} = \sum_{i=1}^{N}\frac{1}{N}z_{i}^{j}$ \\
+$=\sum_{i=1}^{N}\frac{1}{N} \frac{x_{i}^{j}-\overline{x}^{j}}{\sigma^{j}}$ \\
+$=\frac{1}{\sigma^{j}}\left(\sum_{i=1}^{N}\frac{1}{N}x_{i}^{j}-\sum_{i=1}^{N}\frac{1}{N}\overline{x}^{j}\right)$ \\ 
+$=\frac{1}{\sigma^{j}}\left(\sum_{i=1}^{N}\frac{1}{N}x_{i}^{j}-\sum_{i=1}^{N}\frac{1}{N}\overline{x}^{j}\right) = 0$ pour tout \(j \in \{1, \ldots, 29\}\).
+\end{center}
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image11.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image12.png}
+    \label{fig:enter-label}
+\end{figure}
+Ainsi le barycentre se trouve bien à l'origine. 
+
+
+\section{L'inertie du nuage}
+
+Après avoir centré et réduit les variables quantitatives, nous nous intéressons maintenant à l'inertie du nuage par rapport à son barycentre situé à l'origine.
+
+Soient $\bar{z}$ le barycentre, $\sigma_j$ l'écart-type de la variable $j$,
+
+On a :
+\begin{center}
+\begin{align*}
+I_{\bar{z}}(z_i, w_i) &= \sum_{i=1}^N w_i\|z_i - \bar{z}\|^2 \\
+&= \sum_{i=1}^N \frac{1}{N}\|z_i - 0\|^2 \\
+&= \sum_{i=1}^N \frac{1}{N}\|z_i\|^2 \\
+&= \sum_{i=1}^N \frac{1}{N}\sum_{j=1}^J z_{ji}^2 \\
+&= \sum_{j=1}^J \frac{1}{N}\sum_{i=1}^N z_{ji}^2 \\
+&= \sum_{j=1}^J \sigma_j^2 \\
+&= \sum_{j=1}^J 1 \\
+&= J \\
+&= 29
+\end{align*}
+\end{center}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image17.png}
+    \label{fig:enter-label}
+\end{figure}
+
+Donc on a bien l'inertie qui est égale au nombre de variables quantitatives.
 
 \end{document}
