@@ -1,0 +1,342 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{afterpage}
+\usepackage{float}
+\usepackage{amsmath}
+
+
+\newfloat{customfloat}{H}{lop}
+
+\title{TP1 Quelques manipulations élémentaires autour de l'inertie (des vins de Loire)}
+\author{Roméo Bex \and Tristan Rivaldi}
+\date{02/10/2023}
+    
+\setlength{\textwidth}{6in}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+Nous nous intéressons dans ce TP à l'étude de différents vins du département de la Loire. Nous disposons d'un jeu de données constitué de 21 vins décrits selon 31 attributs différents. 29 de ces attributs sont quantitatifs, les deux restants sont qualitatifs. Nous traduisons les variables quantitatives dans l'espace euclidien \(\mathbb{R}^{29}\).
+
+Pour cela, nous allons importer les bibliothèques qui nous seront utiles.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{images.png}
+    \label{fig:enter-label}
+\end{figure}
+
+
+\section{Définitions de fonctions générales}
+
+Nous aurons besoin d'utiliser des notions statistiques telles que l'inertie et le barycentre. Nous allons donc définir des fonctions qui nous permettront de les calculer plus tard.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image2.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\subsection{Chargement des données}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image13.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\section{Centrage réduction des variables quantitatives}
+
+En premier lieu, nous allons extraire les variables quantitatives du jeu de données à l'aide de .iloc et on va les transformer en une matrice. Pour cela nous utilisons .values qui ignore les labels des axes.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image14.png}
+    \label{fig:enter-label}
+\end{figure}
+
+La transformation suivante nous permet de centrer et réduire chaque variable quantitative : 
+
+\begin{center}
+$\displaystyle \frac{x_{i}^{j}-\overline{x}^{j}}{\sigma^{j}}$.
+\end{center}
+
+Le centrage-réduction des variables quantitatives se fera grâce à la fonction scale crée plus haut. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image15.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image16.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\section{Montrons que le barycentre se trouve à l'origine}
+
+Posons \textbf{N = 21} Le nombre d'observations et \textbf{J=29} le nombre de variables quantitatives,
+$\mathbf{z_{i}^{j}}$ la variable centrée réduite.
+Nous avons centré et réduit les variables quantitatives.
+Ainsi 
+$\forall(i,j)\in \left\{1,...,N\right\}\times\left\{1,...,J\right\}$ ,   $\mathbf{z_{i}^{j}}$ = $\displaystyle \frac{x_{i}^{j}-\overline{x}^{j}}{\sigma^{j}}$ 
+
+avec $\overline{x}^{j}$ et $\sigma^{j}$ la moyenne et l'écart-type de la variable quantitative j. 
+
+Le barycentre du nuage est un vecteur \(U \in \mathbb{R}^{29}\) tel que...
+
+$\mathbf{B=(\sum_{i=1}^{N}w_{i}z_{i}^{1},\sum_{i=1}^{N}w_{i}z_{i}^{2},...,\sum_{i=1}^{N}w_{i}z_{i}^{J})}$ 
+
+Comme les poids sont identiques, ceci revient donc à calculer la moyenne de chaque variable centrée-réduite et donc $w_i=\frac{1}{N}$ $\forall i$
+
+Ainsi on a : 
+
+\begin{center}
+$\sum_{i=1}^{N}w_{i}z_{i}^{j} = \sum_{i=1}^{N}\frac{1}{N}z_{i}^{j}$ \\
+$=\sum_{i=1}^{N}\frac{1}{N} \frac{x_{i}^{j}-\overline{x}^{j}}{\sigma^{j}}$ \\
+$=\frac{1}{\sigma^{j}}\left(\sum_{i=1}^{N}\frac{1}{N}x_{i}^{j}-\sum_{i=1}^{N}\frac{1}{N}\overline{x}^{j}\right)$ \\ 
+$=\frac{1}{\sigma^{j}}\left(\sum_{i=1}^{N}\frac{1}{N}x_{i}^{j}-\sum_{i=1}^{N}\frac{1}{N}\overline{x}^{j}\right) = 0$ pour tout \(j \in \{1, \ldots, 29\}\).
+\end{center}
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image11.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{image12.png}
+    \label{fig:enter-label}
+\end{figure}
+Ainsi le barycentre se trouve bien à l'origine. 
+
+
+\section{L'inertie du nuage}
+
+Après avoir centré et réduit les variables quantitatives, nous nous intéressons maintenant à l'inertie du nuage par rapport à son barycentre situé à l'origine.
+
+Soient $\bar{z}$ le barycentre, $\sigma_j$ l'écart-type de la variable $j$,
+
+On a :
+\begin{center}
+\begin{align*}
+I_{\bar{z}}(z_i, w_i) &= \sum_{i=1}^N w_i\|z_i - \bar{z}\|^2 \\
+&= \sum_{i=1}^N \frac{1}{N}\|z_i - 0\|^2 \\
+&= \sum_{i=1}^N \frac{1}{N}\|z_i\|^2 \\
+&= \sum_{i=1}^N \frac{1}{N}\sum_{j=1}^J z_{ji}^2 \\
+&= \sum_{j=1}^J \frac{1}{N}\sum_{i=1}^N z_{ji}^2 \\
+&= \sum_{j=1}^J \sigma_j^2 \\
+&= \sum_{j=1}^J 1 \\
+&= J \\
+&= 29
+\end{align*}
+\end{center}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image17.png}
+    \label{fig:enter-label}
+\end{figure}
+
+Donc on a bien l'inertie qui est égale au nombre de variables quantitatives.
+
+\section{Calcul de poids}
+
+Le jeu de données dont nous disposons contient trois appellations de vins : Saumur, Chinon, Bourgueil. Ces appellations partitionnent notre dataset. Nous nous intéressons aux éventuels liens entre l'apellation et les attributs des vins de Loire.
+
+Nous allons dans un premier temps extraire les matrices propres à chaque appellation et calculer leur poids respectifs.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image19.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image20.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image18.png}
+    \label{fig:enter-label}
+\end{figure}
+
+Comme ces appelations partitionnent notre data set, leur poids respectifs somment à 1.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image22.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\section{Calcul des barycentres}
+
+Nous disposons maintenant des poids et des matrices de chaque appellations. Nous pouvons donc faire appel à la fonction barycenter qui nous permettra de calculer les barycentres de chaque nuage.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image24.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image25.png}
+    \label{fig:enter-label}
+\end{figure}
+
+
+\section{Normes euclidiennes des trois barycentres}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image26.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image27.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\section{Calcul de l'inertie inter-appelations}
+
+Une fois que nous avons défini les barycentres de chaque appellation, nous nous intéressons aux disparités entre classes.
+\begin{center}
+    \textbf{$\sigma^2_{\text{inter}} = \sum_{j=1}^{3} w_j\|z_j - \bar{z}\|^2$}
+\end{center}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image28.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image29.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\section{Calcul du $R^{2}$ : }
+
+L'indicateur de liaison  $R^{2}$ ous donne de l'information sur l'influence d'une classe sur la dispersion des nuages entre eux.
+
+\begin{center}
+    \textbf{$R^2 = \frac{\sigma^2_{\text{inter}}}{\sigma^2_{\text{tot}}}$}
+\end{center}
+
+Ainsi avec un  $R^{2}$
+  proche de  1
+  et grâce au Théorème de Huygens, on récupère de l'information sur la variance intra-classe qui nous indique que les éléments de la même classe sont assez rapprochés.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image30.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image31.png}
+    \label{fig:enter-label}
+\end{figure}
+
+Le  $R^{2}$
+  de la partition des vins en appellations vaut 0.11. Donc, l'appellation n'explique qu'environ 11\%
+  des disparités sensorielles entre les vins de Loire.
+
+  \section{Relation entre l'appellation et les autres variables}
+
+  Nous avons étudié l'influence de l'appellation sur les disparités par rapport à l'ensemble des variables du jeu de données.
+
+Nous nous intéressons maintenant à l'étude de l'influence de l'apellation sur chaque variable sensorielle.
+Nous allons calculer, dans un premier temps, les moyennes intérieures de chaque classe ( Saumur,Bourgueuil, Chinon )
+pour chaque variable. Si \textbf{$j$} est une classe, alors la moyenne à l'intérieur de cette classe par rapport à la variable \textbf{$x$} est : 
+
+\begin{center}
+    \textbf{$\bar{x}_j = \sum_{i \in \text{cl}_j}\frac{w_{i}}{w_{j}}x_{i}$}
+\end{center}
+
+avec $w^j = \sum_{i \in \text{cl}_j}w_i$ et $(x_i)_{i \in [1,N]}$ les coordonnées de la variable $x$
+
+Par exemple pour la classe Bourgueil, et pour une variable donnée :
+
+\begin{center}
+    \textbf{$\bar{x}_{bourg} = \sum_{i=1}^{6}\frac{\frac{1}{6}}{\frac{1}{6}}$}
+\end{center}
+
+Nous faisons la même chose pour les classes Chinon et Saumur et nous procédons au calcul de la moyenne globale :
+
+\begin{center}
+    \textbf{$\bar{x} = \sum_{j=1}^{3}w^j\bar{x}^j$}
+\end{center}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image32.png}
+    \label{fig:enter-label}
+\end{figure}
+
+Une fois les moyennes à disposition, nous nous intéressons à la variance inter-classe qui représente la dispersion des moyennes des classes autour de la moyenne globale. Il nous faut une référence à laquelle comparer la variance inter-classe. C'est pour cela que nous nous intéressons aussi à la variance totale et notamment au rapport entre les deux.
+
+On a : 
+
+\begin{center}
+    \textbf{$\sigma^2_{inter} = \sum_{j=1}^{3}w^j(\bar{x}^j-\bar{x})^2$} \\
+    $\sigma^2_{tot} = \sum_{j=1}^{3}\sum_{i \in cl.j}w_i(x_i-\bar{x})^2$
+\end{center}
+
+Or, les variables sont centrées-réduites, leurs variances valent 1 et ainsi on a : 
+\begin{center}
+    $R^2 = \sigma_{inter}^{2}$
+\end{center}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image33.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image34.png}
+    \label{fig:enter-label}
+\end{figure}
+
+Les variables quantitatives ci-dessus sont classées par leurs degrés de liaison (explicative) à l'appellation (à la variable Label). Ainsi, Odor.Intensity explique environ 40\% de la disparité des classes. De même pour les autres variables.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image35.png}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{image36.png}
+    \label{fig:enter-label}
+\end{figure}
+
+Ainsi le $R^2$ de la partition est égal à la moyenne arithmétique des $R^2$ des variables. 
+
+\end{document}
